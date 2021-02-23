@@ -14,10 +14,11 @@ def pop_target(data:pd.DataFrame, targ:str):
     """
     
     # Imports
-    import pandas as pd
+    from src.utils import assertions as a
     
     # Assertions
-    assert isinstance(data, pd.DataFrame)
+    assert a.all_dataframe([data])
+    assert a.all_str([targ])
     assert targ in data.columns
     
     # Do work
@@ -44,16 +45,16 @@ def split_data(feat:pd.DataFrame, targ:pd.DataFrame, train_size:float=None, test
     """
     
     # Imports
+    from src.utils import assertions as a
     from sklearn.model_selection import train_test_split
     
     # Assertions
-    assert all([isinstance(param, (pd.DataFrame, pd.Series)) for param in [feat, targ]])
-    assert all([isinstance(param, type(None)) for param in [train_size, test_size]])
-    assert train_size is None and test_size is None, "Must provide value for at least one of `train_size` or `test_size`."
+    assert a.all_dataframe_or_series([feat, targ])
+    assert not all([train_size is None, test_size is None]), "Must provide value for at least one of `train_size` or `test_size`."
     if train_size is not None and test_size is not None:
         assert all([param>0 and param<1 for param in [train_size, test_size]])
         assert test_size+train_size==1, "If providing a value for both, the sum of `train_size` and `test_size` must equal `1`."
-    assert isinstance(random_state, int)
+    assert a.all_int([random_state])
     assert random_state>0
     
     # Do work

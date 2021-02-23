@@ -1,5 +1,6 @@
 def valid_url(url):
     from urllib.parse import urlparse
+    assert isinstance(url, str)
     try:
         result = urlparse(url)
         return all([result.scheme, result.netloc, result.path])

@@ -18,13 +18,14 @@ def get_file_data(url:str, save_path:str="./data/external", save_name:str="raw_d
     """
     
     # Imports
+    from src.utils import assertions as a
     import os
     import requests
     from src.utils.misc import valid_url
     
     # Assertions
-    assert all([isinstance(param, str) for param in [url, save_path, save_name]])
-    assert all([isinstance(param, int) for param in [chunk_size]])
+    assert a.all_str([url, save_path, save_name])
+    assert a.all_int([chunk_size])
     assert valid_url(url)
     assert os.path.exists(save_path)
     
@@ -52,7 +53,34 @@ def get_file_data(url:str, save_path:str="./data/external", save_name:str="raw_d
             fd.write(chunk)
             
     return True
+
+def get_unzip_data(source_file:str, target_dir:str, delete_source:bool=True):
     
+    # Imports
+    from src.utils import assertions as a
+    import os
+    from zipfile import ZipFile
+    
+    # Assertions
+    assert a.all_str([source_file, target_dir])
+    assert a.all_bool([delete_source])
+    assert all([os.path.exists(param) for param in [source_file, target_dir]])
+    
+    # Do work
+    try:
+        with ZipFile(source_file, "r") as z:
+            z.extractall(target_dir)
+    except:
+        raise NotImplementedError("Could not extract files from Zip folder.")
+    
+    # Delete source
+    if delete_source:
+        os.remove(source_file)
+    
+    # Return
+    return True
+    
+
 # Get the raw data ----
 def get_raw_data(url:str):
     """

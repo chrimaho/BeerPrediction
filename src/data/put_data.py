@@ -16,11 +16,12 @@ def dump_data(data:any, path:str="./data/raw", name:str="None", suffix:str="jobl
     """
     
     # Imports
+    from src.utils import assertions as a
     import os
     from joblib import dump
     
     # Assertions
-    assert all([isinstance(param, str) for param in [path, name, suffix]])
+    assert a.all_str([path, name, suffix])
     assert os.path.exists(path)
     
     # Join output name

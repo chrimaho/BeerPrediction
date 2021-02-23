@@ -23,4 +23,4 @@ def all_ndarray(lst):
 def all_dataframe_or_series(lst):
     import pandas as pd
     assert isinstance(lst, (list, pd.DataFrame, pd.Series))
-    return all([isinstance(element, (pd.DataFrame, pd.Series)) for element in lst)])
+    return all([isinstance(element, (pd.DataFrame, pd.Series)) for element in lst])

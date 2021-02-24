@@ -7,8 +7,8 @@ def valid_url(url):
     except:
         return False
 
-def get_name(object):
-    return [name for name in globals() if globals()[name] is object]
+def get_name(object, env=globals()):
+    return [name for name in env if env[name] is object]
 
 def get_shape(object, return_str:bool=False):
     shape = object.shape

@@ -8,6 +8,9 @@ sklearn = "*"
 numpy = "*"
 pandas = "*"
 joblib = "*"
+scipy = "*"
+pandas-profiling = "*"
+torch = {file = "https://download.pytorch.org/whl/cu101/torch-1.7.1%2Bcu101-cp39-cp39-win_amd64.whl"}
 
 [dev-packages]
 

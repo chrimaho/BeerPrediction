@@ -1,5 +1,40 @@
 import pandas as pd
 
+def rem_features(data:pd.DataFrame, feats:list):
+    
+    # Imports
+    from src.utils import assertions as a
+    from src.utils.misc import all_in
+    
+    # Assertions
+    assert a.all_dataframe([data])
+    assert isinstance(feats, (str, list))
+    assert a.all_str(feats)
+    assert all_in(feats, data.columns)
+    
+    # Do work
+    data = data.drop(columns=feats)
+    
+    # Return
+    return data
+
+def sel_feat_cols(data:pd.DataFrame, feats:list):
+    
+    # Imports
+    from src.utils import assertions as a
+    from src.utils.misc import all_in
+    
+    # Assertions
+    assert a.all_dataframe([data])
+    assert isinstance(feats, (str, list))
+    assert a.all_str(feats)
+    assert all_in(feats, data.columns)
+    
+    # Do work
+    data = data[feats]
+    
+    return data
+
 def pop_target(data:pd.DataFrame, targ:str):
     """
     Pop the target column off the data set.
@@ -67,20 +102,3 @@ def split_data(feat:pd.DataFrame, targ:pd.DataFrame, train_size:float=None, test
     # Return
     return feat_trn, feat_tst, targ_trn, targ_tst
 
-def rem_features(data:pd.DataFrame, feats:list):
-    
-    # Imports
-    from src.utils import assertions as a
-    from src.utils.misc import all_in
-    
-    # Assertions
-    assert isinstance(feats, (str, list))
-    assert a.all_dataframe([data])
-    assert a.all_str(feats)
-    assert all_in(feats, data.columns)
-    
-    # Do work
-    data = data.drop(columns=feats)
-    
-    # Return
-    return data

@@ -27,6 +27,7 @@ def pop_target(data:pd.DataFrame, targ:str):
     # Return
     return data, targ
 
+
 def split_data(feat:pd.DataFrame, targ:pd.DataFrame, train_size:float=None, test_size:float=None, random_state:int=123):
     """
     Split the data in to train & test sets.
@@ -64,4 +65,22 @@ def split_data(feat:pd.DataFrame, targ:pd.DataFrame, train_size:float=None, test
         feat_trn, feat_tst, targ_trn, targ_tst = train_test_split(feat, targ, stratify=targ, train_size=train_size, random_state=random_state)
 
     # Return
-    feat_trn, feat_tst, targ_trn, targ_tst
+    return feat_trn, feat_tst, targ_trn, targ_tst
+
+def rem_features(data:pd.DataFrame, feats:list):
+    
+    # Imports
+    from src.utils import assertions as a
+    from src.utils.misc import all_in
+    
+    # Assertions
+    assert isinstance(feats, (str, list))
+    assert a.all_dataframe([data])
+    assert a.all_str(feats)
+    assert all_in(feats, data.columns)
+    
+    # Do work
+    data = data.drop(columns=feats)
+    
+    # Return
+    return data

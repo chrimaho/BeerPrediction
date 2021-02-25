@@ -102,3 +102,29 @@ def split_data(feat:pd.DataFrame, targ:pd.DataFrame, train_size:float=None, test
     # Return
     return feat_trn, feat_tst, targ_trn, targ_tst
 
+def make_ohe(feat:pd.DataFrame, cols:list):
+    
+    # Imports
+    from src.utils import assertions as a
+    from src.utils.misc import all_in
+    from sklearn.preprocessing import OneHotEncoder
+    
+    # Assertions
+    assert a.all_dataframe(feat)
+    assert a.all_str(cols)
+    assert all_in(cols, feat.columns)
+    
+    # Instantiations
+    ohe = OneHotEncoder(sparse=False)
+    
+    # Do work
+    data = feat[cols]
+    data = ohe.fit_transform(data)
+    data = pd.DataFrame(data)
+    data.columns = ohe.get_feature_names(cols)
+    feat.drop(cols, axis=1, inplace=True)
+    feat = pd.concat([feat, data], axis=1)
+    
+    # Return
+    return feat
+    

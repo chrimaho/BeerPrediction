@@ -9,7 +9,9 @@ def make_ohe(feat:pd.DataFrame, cols:list, transform:bool=True):
     # Assertions
     assert a.all_dataframe(feat)
     assert a.all_str(cols)
+    if isinstance(cols, str): cols = [cols]
     assert a.all_in(cols, feat.columns)
+    assert a.all_bool(transform)
     
     # Instantiations
     ohe = OneHotEncoder(sparse=False)
@@ -37,7 +39,9 @@ def make_oe(feat:pd.DataFrame, cols:list, transform:bool=True):
     # Assertions
     assert a.all_dataframe(feat)
     assert a.all_str(cols)
+    if isinstance(cols, str): cols = [cols]
     assert a.all_in(cols, feat.columns)
+    assert a.all_bool(transform)
     
     # Instantiations
     oe = OrdinalEncoder()
@@ -61,7 +65,9 @@ def make_le(feat:pd.DataFrame, cols:list, transform:bool=True):
     # Assertions
     assert a.all_dataframe(feat)
     assert a.all_str(cols)
+    if isinstance(cols, str): cols = [cols]
     assert a.all_in(cols, feat.columns)
+    assert a.all_bool(transform)
     
     # Instantiations
     le = LabelEncoder()
@@ -72,7 +78,36 @@ def make_le(feat:pd.DataFrame, cols:list, transform:bool=True):
     else:
         le.fit(feat[cols])
     
+    # Return
     return feat, le
+
+
+def make_si(feat:pd.DataFrame, cols:list, transform:bool=True):
+    
+    # Imports
+    from src.utils import assertions as a
+    from sklearn.impute import SimpleImputer
+    import numpy as np
+    
+    # Assertions
+    assert a.all_dataframe(feat)
+    if isinstance(cols, str): cols = [cols]
+    assert a.all_str(cols)
+    assert a.all_in(cols, feat.columns)
+    assert a.all_bool(transform)
+    
+    # Instantiations
+    si = SimpleImputer(missing_values=np.nan, strategy="constant", fill_value="Other")
+    
+    # Do work
+    if transform:
+        feat[cols] = si.fit_transform(feat[cols])
+    else:
+        si.fit(feat[cols])
+    
+    # Return
+    return feat, si
+    
 
 
 def encode_features(feat:pd.DataFrame, cols=list, type:str="ordinal", transform:bool=True):
@@ -87,7 +122,7 @@ def encode_features(feat:pd.DataFrame, cols=list, type:str="ordinal", transform:
     assert a.all_str(cols)
     assert a.all_str(type)
     
-    # Do work
+    # Do work & return
     if type in ["oe","ord","ordinal","ordinalencoder","ordinal encoder"]:
         return make_oe(feat=feat, cols=cols, transform=transform)
     elif type in ["ohe","one","onehotencoder","one hot encoder"]:
@@ -97,7 +132,7 @@ def encode_features(feat:pd.DataFrame, cols=list, type:str="ordinal", transform:
     else:
         return feat, None
     
-def scale_features(feat:pd.DataFrame, cols:list=None):
+def scale_features(feat:pd.DataFrame, cols:list=None, transform:bool=True):
     
     # Imports
     from src.utils import assertions as a
@@ -105,7 +140,11 @@ def scale_features(feat:pd.DataFrame, cols:list=None):
     
     # Assertions
     assert a.all_dataframe(feat)
-    assert a.all_str(cols)
+    if cols:
+        if isinstance(cols, str): cols = [cols]
+        assert a.all_str(cols)
+        assert a.all_in(cols, feat.columns)
+    assert a.all_bool(transform)
     
     # Get cols
     if not cols:
@@ -115,4 +154,10 @@ def scale_features(feat:pd.DataFrame, cols:list=None):
     sc = StandardScaler()
     
     # Do work
-    feat[cols] = sc.fit_transform(feat[cols])
+    if transform:
+        feat[cols] = sc.fit_transform(feat[cols])
+    else:
+        sc.fit(feat[cols])
+    
+    # Return
+    return feat, sc

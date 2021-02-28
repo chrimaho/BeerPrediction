@@ -1,34 +1,26 @@
-def valid_url(url):
-    from urllib.parse import urlparse
-    assert isinstance(url, str)
-    try:
-        result = urlparse(url)
-        return all([result.scheme, result.netloc, result.path])
-    except:
-        return False
 
-def get_name(object, env=globals()):
-    return [name for name in env if env[name] is object]
+#------------------------------------------------------------------------------#
+# get_*() funcitons                                                         ####
+#------------------------------------------------------------------------------#
+
+def get_name(object):
+    # global env
+    # env = globals()
+    # return [name for name in env if env[name] is object]
+    from varname import nameof,varname
+    obj = varname(frame=2)
+    return obj
+
 
 def get_shape(object, return_str:bool=False):
-    shape = object.shape
+    if not hasattr(object, "shape"):
+        return "`object` has no shape."
+    else:
+        shape = object.shape
     if return_str:
-        shape = " ".join(str(dim) for dim in shape)
+        shape = " x ".join(str(dim) for dim in shape)
     return shape
 
-def all_in(sequence1, sequence2):
-    """
-    Confirm that all elements of one sequence are definitely contained within another
-    """
-    return all(elem in sequence2 for elem in sequence1)
-
-def str_right(string:str, num_chars:int):
-    """
-    Sub-Select the right-most number of characters from a string
-    """
-    assert isinstance(string, str)
-    assert isinstance(num_chars, int)
-    return string[-num_chars:]
 
 def get_list_proportions(lst:list):
     """
@@ -41,3 +33,36 @@ def get_list_proportions(lst:list):
     for val in dist:
         prop[val] = sum(map(lambda x: x==val, lst))/len(lst)
     return prop
+
+
+
+
+
+#------------------------------------------------------------------------------#
+# url functions                                                             ####
+#------------------------------------------------------------------------------#
+
+def valid_url(url):
+    from urllib.parse import urlparse
+    assert isinstance(url, str)
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc, result.path])
+    except:
+        return False
+
+
+
+#------------------------------------------------------------------------------#
+# string manipulations                                                      ####
+#------------------------------------------------------------------------------#
+
+
+def str_right(string:str, num_chars:int):
+    """
+    Sub-Select the right-most number of characters from a string
+    """
+    assert isinstance(string, str)
+    assert isinstance(num_chars, int)
+    return string[-num_chars:]
+

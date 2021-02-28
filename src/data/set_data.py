@@ -55,10 +55,12 @@ def pop_target(data:pd.DataFrame, targ:str):
     assert targ in data.columns
     
     # Do work
-    targ = data.pop(targ)
+    # targ = data.pop(targ)
+    feat = data.drop([targ], axis=1)
+    targ = data[[targ]]
     
     # Return
-    return data, targ
+    return feat, targ
 
 
 def split_data(feat:pd.DataFrame, targ:pd.DataFrame, train_size:float=None, test_size:float=None, random_state:int=123):
@@ -99,3 +101,43 @@ def split_data(feat:pd.DataFrame, targ:pd.DataFrame, train_size:float=None, test
 
     # Return
     return feat_trn, feat_tst, targ_trn, targ_tst
+
+
+def split_sets_random(df, target_col, test_ratio=0.2, to_numpy=False):
+    """Split sets randomly
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Input dataframe
+    target_col : str
+        Name of the target column
+    test_ratio : float
+        Ratio used for the validation and testing sets (default: 0.2)
+
+    Returns
+    -------
+    Numpy Array
+        Features for the training set
+    Numpy Array
+        Target for the training set
+    Numpy Array
+        Features for the validation set
+    Numpy Array
+        Target for the validation set
+    Numpy Array
+        Features for the testing set
+    Numpy Array
+        Target for the testing set
+    """
+    
+    from sklearn.model_selection import train_test_split
+    
+    features, target = pop_target(df=df, target_col=target_col, to_numpy=to_numpy)
+    
+    X_data, X_test, y_data, y_test = train_test_split(features, target, test_size=test_ratio, random_state=8)
+    
+    val_ratio = test_ratio / (1 - test_ratio)
+    X_train, X_val, y_train, y_val = train_test_split(X_data, y_data, test_size=val_ratio, random_state=8)
+
+    return X_train, y_train, X_val, y_val, X_test, y_test

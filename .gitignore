@@ -133,3 +133,6 @@ dmypy.json
 
 # Ignore tests
 test/
+
+# Ignore certain data files
+data/interim/*.joblib

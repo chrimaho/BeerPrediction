@@ -76,13 +76,27 @@ def all_dict(lst):
     else:
         return isinstance(lst, dict)
 
-
 def all_real(lst):
     import numpy as np
     if isinstance(lst, list):
-        return np.all(np.isreal(lst))
+        return np.all([np.all(np.isreal(element)) for element in lst])
     else:
-        return np.isreal(lst)
+        return np.all(np.isreal(lst))
+
+
+def all_scalar(lst):
+    import numpy as np
+    if isinstance(lst, list):
+        return all([np.isscalar(element) for element in lst])
+    else:
+        return np.isscalar(lst)
+    
+    
+def all_float(lst):
+    if isinstance(lst, list):
+        return all([isinstance(element, float) for element in lst])
+    else:
+        return isinstance(lst, float)
 
 
 def all_dataframe(lst):

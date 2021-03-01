@@ -9,11 +9,13 @@
 #------------------------------------------------------------------------------#
 
 
-from torch.utils.data import Dataset, DataLoader
+from typing import OrderedDict
 import numpy as np
+from src.models.pytorch import get_device
 import torch
 from torch import nn
 from torch.nn import functional as F
+from torch.utils.data import Dataset, DataLoader
 
 
 
@@ -159,12 +161,12 @@ class Net(nn.Module):
         return x
     
     def forward(self, feat):
-        X = F.dropout(F.relu(self.fc1(feat)), training=self.training)
-        X = F.dropout(F.relu(self.fc2(X)), training=self.training)
-        X = F.dropout(F.relu(self.fc3(X)), training=self.training)
-        X = F.dropout(F.relu(self.fc4(X)), training=self.training)
-        X = F.dropout(F.relu(self.fc5(X)), training=self.training)
-        X = F.dropout(F.relu(self.fc6(X)), training=self.training)
+        X = F.dropout(F.relu(self.fc1(feat)), p=0.3, training=self.training)
+        X = F.dropout(F.relu(self.fc2(X)), p=0.3, training=self.training)
+        X = F.dropout(F.relu(self.fc3(X)), p=0.3, training=self.training)
+        X = F.dropout(F.relu(self.fc4(X)), p=0.3, training=self.training)
+        X = F.dropout(F.relu(self.fc5(X)), p=0.3, training=self.training)
+        X = F.dropout(F.relu(self.fc6(X)), p=0.3, training=self.training)
         X = self.out(X)
         X = self.softmax(X)
         return X
@@ -654,11 +656,11 @@ def plot_network_training(metrics:dict):
     from IPython.display import clear_output
     import numpy as np
     import matplotlib.pyplot as plt
-    from src.utils.misc import all_in
+    from src.utils import assertions as a
 
     # Assertions
     assert isinstance(metrics, dict)
-    assert all_in(["accu_trn", "loss_trn", "accu_val", "loss_val"], list(metrics.keys()))
+    assert a.all_in(["accu_trn", "loss_trn", "accu_val", "loss_val"], list(metrics.keys()))
 
     # If only 1 score, then end
     epoch = len(next(iter(metrics.values())))
@@ -709,6 +711,36 @@ def plot_network_training(metrics:dict):
 #------------------------------------------------------------------------------#
 
 
+
+#------------------------------------------------------------------------------#
+# Set                                                                       ####
+#------------------------------------------------------------------------------#
+
+
+def model_set \
+    ( hidden_shapes:list=[20,30,40]
+    , hidden_acti:str="relu"
+    , final_shape:int=1
+    , final_acti:str="sigmoid"
+    , dropout:float=0.2
+    ):
+    
+    # Imports
+    
+    
+    # Assertions
+    
+    
+    # Set output
+    out = []
+    
+    # Set first layer
+    out.append()
+    
+    # Return
+    return out
+
+
 #------------------------------------------------------------------------------#
 # Train                                                                     ####
 #------------------------------------------------------------------------------#
@@ -723,8 +755,8 @@ def model_train \
     , hidden_acti:str="relu"
     , final_shape:int=1
     , final_acti:str="sigmoid"
-    , device:torch.device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    , scheduler:bool=True
+    , device:torch.device=get_device()
+    , scheduler:torch.optim.lr_scheduler=None
     ):
 
     # Set to train
@@ -750,7 +782,7 @@ def model_train \
         optm.zero_grad()
 
         # Feed forward
-        output = modl.forward \
+        output = modl \
             ( feat=inputs
             , hidden_shapes=hidden_shapes
             , hidden_acti=hidden_acti
@@ -791,7 +823,7 @@ def model_validate \
     , hidden_acti:str="relu"
     , final_shape:int=1
     , final_acti:str="sigmoid"
-    , device:torch.device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    , device:torch.device=get_device()
     ):
 
     # Set to validation
@@ -851,7 +883,7 @@ def train_overall_network \
     , batch_size:int=100
     , epochs:int=500
     , learning_rate:float=0.001
-    , device:torch.device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    , device:torch.device=get_device()
     , scheduler:bool=True
     , verbosity:int=10
     , plot_learning:bool=True
@@ -861,33 +893,30 @@ def train_overall_network \
     import numpy as np
     from src.utils import assertions as a
     from src.models.pytorch import PyTorchDataset
-    from torch import nn
-    from torch import optim
+    from torch import nn, optim
     from src.models.pytorch import Net
     
     # Assertions
-    assert np.all([np.all(np.isreal(param)) for param in [feat_trn, targ_trn, feat_val, targ_val]])
+    assert a.all_real([feat_trn, targ_trn, feat_val, targ_val])
     assert isinstance(hidden_shapes, list)
     assert len(hidden_shapes)>0, "Must have at least 1 hidden layer"
-    assert np.all([isinstance(elem, int) for elem in hidden_shapes])
-    assert np.all([np.isscalar(param) for param in [hidden_acti, final_shape, final_acti, batch_size, epochs, learning_rate]])
+    assert a.all_in(hidden_shapes)
+    assert a.all_scalar([hidden_acti, final_shape, final_acti, batch_size, epochs, learning_rate])
     assert isinstance(verbosity, (int, type(None)))
-    assert np.all([isinstance(param, int) for param in [batch_size, epochs, verbosity]])
-    assert np.all([isinstance(param, str) for param in [hidden_acti, final_acti]])
-    assert isinstance(learning_rate, float)
+    assert a.all_int([batch_size, epochs, verbosity])
+    assert a.all_str([hidden_acti, final_acti])
+    assert a.all_float(learning_rate)
 
     # Initialise data generators
     data_trn = PyTorchDataset(feat_trn, targ_trn)
     data_val = PyTorchDataset(feat_val, targ_val)
-    # load_trn = DataLoader(data_trn, batch_size=batch_size, shuffle=True, num_workers=0)
-    # load_val = DataLoader(data_val, batch_size=batch_size, shuffle=True, num_workers=0)
 
     # Initialise classes
-    modl = Net()
-    crit = nn.BCELoss()
+    modl = Net(feat_trn.shape[1], len(set(targ_trn)))
+    crit = nn.CrossEntropyLoss()
     optm = optim.Adam(modl.parameters(), lr=learning_rate)
     if scheduler:
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optm)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer=optm, mode="min", patience=3)
 
     # Push network to device
     modl.to(device)

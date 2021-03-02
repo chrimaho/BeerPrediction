@@ -721,7 +721,7 @@ def model_set \
     , hidden_shapes:list=[20,30,40]
     , hidden_acti:torch.nn.modules.activation=nn.ReLU()
     , final_shape:int=1
-    , final_acti:torch.nn.modules.activation=nn.Sigmoid()
+    , final_acti:torch.nn.modules.activation=nn.Softmax(dim=1)
     , dropout:float=0.2
     ):
     

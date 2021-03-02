@@ -9,9 +9,8 @@
 #------------------------------------------------------------------------------#
 
 
-from typing import OrderedDict
+from collections import OrderedDict
 import numpy as np
-from src.models.pytorch import get_device
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -718,27 +717,63 @@ def plot_network_training(metrics:dict):
 
 
 def model_set \
-    ( hidden_shapes:list=[20,30,40]
-    , hidden_acti:str="relu"
+    ( first_shape:int=5
+    , hidden_shapes:list=[20,30,40]
+    , hidden_acti:torch.nn.modules.activation=nn.ReLU()
     , final_shape:int=1
-    , final_acti:str="sigmoid"
+    , final_acti:torch.nn.modules.activation=nn.Sigmoid()
     , dropout:float=0.2
     ):
     
     # Imports
-    
+    from src.utils import assertions as a
+    from torch import nn
+    from collections import OrderedDict
     
     # Assertions
-    
+    assert a.all_int([first_shape, final_shape])
+    assert a.all_int(hidden_shapes)
+    assert a.all_float(dropout)
+    assert hidden_acti.__module__ == "torch.nn.modules.activation"
+    assert final_acti.__module__ == "torch.nn.modules.activation"
     
     # Set output
-    out = []
+    modl = []
     
-    # Set first layer
-    out.append()
+    # Add first layer
+    modl.extend (\
+        [ ("shap_frst", nn.Linear(first_shape, hidden_shapes[0]))
+        , ("acti_frst", hidden_acti)
+        , ("regl_frst", nn.Dropout(p=dropout))
+        ])
+        
+    # Loop through each hidden layer
+    for idx, layer in enumerate(hidden_shapes):
+        
+        # Skip the final layer
+        if idx+1==len(hidden_shapes): break
+        
+        # Add hidden layer
+        modl.extend (\
+            [ ("shap_{:02}".format(idx+1), nn.Linear(layer, hidden_shapes[idx+1]))
+            , ("acti_{:02}".format(idx+1), hidden_acti)
+            , ("regl_{:02}".format(idx+1), nn.Dropout(p=dropout))
+            ])
+            
+    # Add final layer
+    modl.extend (\
+        [ ("shap_finl", nn.Linear(hidden_shapes[-1], final_shape))
+        , ("acti_finl", final_acti)
+        ])
+            
+    # Form in to OrderedDict()
+    modl = OrderedDict(modl)
+    
+    # Form in to Sequential()
+    modl = nn.Sequential(modl)
     
     # Return
-    return out
+    return modl
 
 
 #------------------------------------------------------------------------------#

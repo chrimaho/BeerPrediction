@@ -545,8 +545,8 @@ def train_classification \
         optimizer.zero_grad()
         
         # Load data to specified device
-        feature.to(device)
-        target_class.to(device)
+        feature = feature.to(device)
+        target_class = target_class.to(device)
         
         # Make predictions
         output = model(feature)

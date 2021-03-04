@@ -2,9 +2,20 @@
     <head>
         <title>Beer Prediction</title>
         <style>
-            h1 {text-indent: 0px; font-weight: bold; font-style: normal;}
-            h2 {text-indent: 40px; font-weight: normal; font-style: normal;}
-            h3 {text-indent: 80px; font-weight: normal; font-style: italic;}
+            h1 {text-indent: 0px;  font-weight: bold;   font-style: normal; text-align: center; padding-top: 0px;}
+            h2 {text-indent: 0px;  font-weight: bold;   font-style: normal; text-align: left;   padding-top: 20px;}
+            h3 {text-indent: 40px; font-weight: normal; font-style: normal; text-align: left;   padding-top: 15px;}
+            h4 {text-indent: 80px; font-weight: normal; font-style: italic; text-align: left;   padding-top: 10px;}
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 5px;
+            }
+            code {
+                background-color: lightgrey;
+            }
         </style>
     </head>
     <body>
@@ -17,18 +28,61 @@
         -->
         <h1>Beer Predictions</h1>
             <h2>Overview</h2>
-                <h3>Project Description</h3>
-                    <p>Description</p>
-                <h3>Project Objectives</h3>
-                    <p>Objectives</p>
+                <table>
+                    <tr>
+                        <td><i>Project Description</i>:</td>
+                        <td>Description</td>
+                    </tr>
+                    <tr>
+                        <td><i>Project Objectives</i>:</td>
+                        <td>Objectives</td>
+                    </tr>
+                </table>              
             <h2>Endpoints</h2>
+                <table>
+                    <tr>
+                        <td><code>/</code></td>
+                        <td>Description</td>
+                    </tr>
+                    <tr>
+                        <td><code>/docs/</code></td>
+                        <td>Description</td>
+                    </tr>
+                    <tr>
+                        <td><code>/health/</code></td>
+                        <td>Description</td>
+                    </tr>
+                    <tr>
+                        <td><code>/beer/type/</code></td>
+                        <td>Description</td>
+                    </tr>
+                    <tr>
+                        <td><code>/beers/type/</code></td>
+                        <td>Description</td>
+                    </tr>
+                    <tr>
+                        <td><code>/model/architecture/</code></td>
+                        <td>Description</td>
+                    </tr>
+                </table>
             <h2>Model Info</h2>
-                <h3>Input Parameters</h3>
-                    <p>Parameters</p>
-                <h3>Output Format</h3>
-                    <p>Format</p>
+                <table>
+                    <tr>
+                        <td><i>Input Parameters</i>:</td>
+                        <td>Parameters</td>
+                    </tr>
+                    <tr>
+                        <td><i>Output Format</i>:</td>
+                        <td>Format</td>
+                    </tr>
+                </table>
             <h2>More Info</h2>
-                <h3>GitHub</h3>
-                    <p>URL</p>
+                <table>
+                    <tr>
+                        <td><i>GitHub Repo</i>:</td>
+                        <td><a href="https://github.com/chrimaho/BeerPrediction">BeerPrediction</a></td>
+                    </tr>
+                </table>              
+    
     </body>
 </html>

@@ -29,6 +29,10 @@ import sys
 import subprocess
 from fastapi import FastAPI, Response
 from fastapi.responses import HTMLResponse, PlainTextResponse
+import torch
+# from torch import nn
+# from torch.nn import functional as F
+# from torch.utils.data import Dataset, DataLoader
 
 
 #------------------------------------------------------------------------------#
@@ -36,7 +40,7 @@ from fastapi.responses import HTMLResponse, PlainTextResponse
 #------------------------------------------------------------------------------#
 
 # Ensure the directory is correct... every time ----
-for i in range(5):
+for _ in range(5):
     if not os.getcwd().lower() == subprocess.run("git rev-parse --show-toplevel", stdout=subprocess.PIPE).stdout.decode("utf-8").replace("/","\\").strip().lower():
         os.chdir(".."),
     else:
@@ -80,8 +84,8 @@ app = FastAPI()
 @app.get("/", response_class=HTMLResponse)
 def read_root():
     
-    with open('./app/info.html', "rt") as f:
-        data = f.read()
+    with open('./app/info.html', "rt") as file:
+        data = file.read()
             
     return Response(content=data, media_type="text/html")
 
@@ -99,6 +103,30 @@ def healthcheck():
 # Architecture                                                              ####
 #------------------------------------------------------------------------------#
 
-@app.get("/model/architecture")
+@app.get("/model/architecture", response_class=PlainTextResponse)
 def get_architecture():
-    return None
+
+    # Imports
+    import sys
+    import io
+
+    # Set process to capture output from `print()`
+    old_stdout = sys.stdout
+    new_stdout = io.StringIO()
+    sys.stdout = new_stdout
+    
+    # Load model
+    modl = torch.load("./models/predictors/beer_prediction.pt")
+    
+    # Print model summary
+    print("Beer Prediction Architecture")
+    print(modl)
+    
+    # Capture output
+    output = new_stdout.getvalue()
+    
+    # Re-set output process
+    sys.stdout = old_stdout
+    
+    # Return
+    return output

@@ -27,7 +27,7 @@
 import os
 import sys
 import subprocess
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.responses import HTMLResponse, PlainTextResponse
 
 
@@ -79,20 +79,12 @@ app = FastAPI()
 
 @app.get("/", response_class=HTMLResponse)
 def read_root():
-    """
-    Displaying:
-    1. A brief description of the project objectives,
-    2. A list of endpoints, 
-    3. Expected input parameters and output format of the model, 
-    4. Link to the Github repo related to this project
-    """
-    
-    from fastapi import Response
     
     with open('./app/info.html', "rt") as f:
         data = f.read()
             
     return Response(content=data, media_type="text/html")
+
 
 #------------------------------------------------------------------------------#
 # Health                                                                    ####
@@ -101,3 +93,12 @@ def read_root():
 @app.get("/health", status_code=200, response_class=PlainTextResponse)
 def healthcheck():
     return "App is ready to go."
+
+
+#------------------------------------------------------------------------------#
+# Architecture                                                              ####
+#------------------------------------------------------------------------------#
+
+@app.get("/model/architecture")
+def get_architecture():
+    return None

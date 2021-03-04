@@ -86,29 +86,21 @@ class Net(nn.Module):
         assert a.all_int([feat_num_in, feat_num_out])
         
         # Fully connected layers
-        # Classic conical shape
-        # 5→10→20→40→80→100→104
-        self.fc1 = nn.Linear(feat_num_in,5)
-        self.fc2 = nn.Linear(5,10)
-        self.fc3 = nn.Linear(10,20)
-        self.fc4 = nn.Linear(20,40)
-        self.fc5 = nn.Linear(40,80)
-        self.fc6 = nn.Linear(80,100)
+        self.fc1 = nn.Linear(feat_num_in,10)
+        self.fc2 = nn.Linear(10,50)
+        self.fc3 = nn.Linear(50,100)
         self.out = nn.Linear(100,feat_num_out)
         self.softmax = nn.Softmax(dim=1)
 
     # Static propagation 😒
-    def forward_1(self, x):
+    def forward(self, x):
         """Run forward prop"""
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
-        x = F.relu(self.fc4(x))
-        x = F.relu(self.fc5(x))
-        x = F.relu(self.fc6(x))
-        x = F.sigmoid(self.fc7(x))
-        x = x[:,0]
+        x = F.dropout(F.relu(self.fc1(x)), p=0.3, training=self.training)
+        x = F.dropout(F.relu(self.fc2(x)), p=0.3, training=self.training)
+        x = F.dropout(F.relu(self.fc3(x)), p=0.3, training=self.training)
+        x = F.softmax(self.out(x))
         return x
+    
     # Dynamic propagation 😁
     def forward_2 \
         ( self
@@ -159,7 +151,7 @@ class Net(nn.Module):
         # Return
         return x
     
-    def forward(self, feat):
+    def forward_3(self, feat):
         X = F.dropout(F.relu(self.fc1(feat)), p=0.3, training=self.training)
         X = F.dropout(F.relu(self.fc2(X)), p=0.3, training=self.training)
         X = F.dropout(F.relu(self.fc3(X)), p=0.3, training=self.training)

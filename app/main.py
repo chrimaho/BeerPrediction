@@ -86,6 +86,7 @@ tags_metadata = \
 # Instantiations                                                            ####
 #------------------------------------------------------------------------------#
 
+
 # API object ----
 app = FastAPI \
     ( title="Beer Prediction"
@@ -106,25 +107,72 @@ app = FastAPI \
 # GET                                                                       ####
 #------------------------------------------------------------------------------#
 
+
 # / ----
-@app.get("/", response_class=HTMLResponse, tags=["Homepage"])
+@app.get \
+    ( "/"
+    , response_class=HTMLResponse
+    , summary="Read homepage"
+    , description="# Homepage\n\nOverview and details about the app.\n\nURL: [/](/)"
+    , tags=["Homepage"]
+    )
 def read_overview():
     return Response(content=p.read_html(), media_type="text/html")
 
+
 # /health ----
-@app.get("/health", status_code=200, response_class=PlainTextResponse, tags=["App Info"])
+@app.get \
+    ( "/health"
+    , status_code=200
+    , response_class=PlainTextResponse
+    , summary="Health check"
+    , description="# Health Check\n\nCheck to ensure that the app is healthy and ready to run.\n\nURL: [/health](/health)"
+    , tags=["App Info"]
+    )
 def check_app_health():
     return "App is ready to go."
 
+
 # /model/architecture ----
-@app.get("/model/architecture", response_class=PlainTextResponse, tags=["App Info"])
+@app.get \
+    ( "/model/architecture"
+    , response_class=PlainTextResponse
+    , summary="Model architecture"
+    , description="# Model Architecture\n\nCheck to review the architecture of the model.\n\nURL: [/model/architecture](/model/architecture)"
+    , tags=["App Info"]
+    )
 def get_model_architecture():
     return p.get_architecture()
+
+
+# /beer/type ----
+@app.get \
+    ( "/beer/type"
+    , response_class=PlainTextResponse
+    , summary="Predict single beer type"
+    , description="# Single Prediction\n\nPredict single Beer type, based on set input criteria.\n\nURL: [/beer/type](/beer/type)\n\n**NOTE**: This `GET` method will not perform the prediction. Please see below `POST` method for more details."
+    , tags=["App Info"]
+    )
+def get_beer_type():
+    return "Invalid server call. See /docs/ for help."
+
+
+# /beers/type ----
+@app.get \
+    ( "/beers/type"
+    , response_class=PlainTextResponse
+    , summary="Predict multiple beer type"
+    , description="# Multiple Prediction\n\nPredict multiple Beer types, based on set input criteria.\n\nURL: [/beers/type](/beers/type)\n\n**NOTE**: This `GET` method will not perform the prediction. Please see below `POST` method for more details."
+    , tags=["App Info"]
+    )
+def get_beers_type():
+    return "Invalid server call. See /docs/ for help."
 
 
 #------------------------------------------------------------------------------#
 # POST                                                                      ####
 #------------------------------------------------------------------------------#
+
 
 # /beer/type ----
 @app.post \
@@ -133,7 +181,7 @@ def get_model_architecture():
     , tags=["Query Model"]
     , summary="Predict single beer types"
     , description=read("./docs/post_single_description.md")
-    , responses={498: {"title":"Invalid Token", "description":"If any input params are invalid."}}
+    , responses={498: {"title":"Invalid Input", "description":"If any input params are invalid."}}
     )
 def post_single \
     ( brewery_name:str=Query(..., title="Query string", description="Name of the Brewery (field: `brewery_name`).", )
@@ -168,14 +216,15 @@ def post_single \
     # Return
     return PlainTextResponse(str(pred[0]))
 
+
 # /beers/type ----
 @app.post \
     ( "/beers/type"
     , response_class=PlainTextResponse
     , tags=["Query Model"]
-    , summary="Predict single beer types"
+    , summary="Predict multiple beer types"
     , description=read("./docs/post_multiple_description.md")
-    , responses={498: {"title":"Invalid Token", "description":"If any input params are invalid."}}
+    , responses={498: {"title":"Invalid Input", "description":"If any input params are invalid."}}
     )
 def post_multiple \
     ( brewery_name:List[str]=Query(..., description="List of Brewery names (field: `brewery_name`).")
@@ -188,15 +237,21 @@ def post_multiple \
     # Imports
     from joblib import load
     import numpy as np
+    from scipy.stats import mode
     
     # Validate params
     error = ""
     breweries = load("./data/processed/valid_breweries.joblib")
     for brewery in brewery_name:
         if not brewery in breweries:
+            if len(error)>0: error += "\n"
             error += f"The brewery '{brewery}' is not valid."
+    len_mode = mode([len(param) for param in [brewery_name, review_aroma, review_appearance, review_palate, review_taste]])[0][0]
     for param in ["review_aroma", "review_appearance", "review_palate", "review_taste"]:
-        if np.any(np.array(eval(param)) <= 0) and np.any(np.array(eval(param)) > 5):
+        if len(eval(param)) != len_mode:
+            if len(error)>0: error += "\n"
+            error += f"All input params must have the same length. Param '{param}' has length '{len(eval(param))}', expecting '{len_mode}'."
+        if np.any(np.array(eval(param)) <= 0) or np.any(np.array(eval(param)) > 5):
             if len(error)>0: error += "\n"
             error += f"The values for param '{param}' is invalid. Must be between '0' and '5'."
     if len(error)>0:

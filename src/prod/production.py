@@ -24,6 +24,8 @@ def get_architecture():
     import sys
     import io
     import torch
+    from torchsummary import summary
+    from src.models.pytorch import get_device
 
     # Set process to capture output from `print()`
     old_stdout = sys.stdout
@@ -31,11 +33,12 @@ def get_architecture():
     sys.stdout = new_stdout
     
     # Load model
-    modl = torch.load("./models/predictors/beer_prediction.pt")
+    modl = torch.load("./models/predictors/beer_prediction.pt").to(get_device())
     
     # Print model summary
     print("Beer Prediction Architecture")
-    print(modl)
+    # print(modl)
+    print(summary(modl, (1000, 5)))
     
     # Capture output
     output = new_stdout.getvalue()
@@ -77,7 +80,7 @@ def predict_single \
     # Imports
     from src.utils import assertions as a
     from src.models.predict import prepare_data, predict_classification, decode_predictions
-    from src.models.pytorch import Net
+    from src.models.pytorch import Modl
     import torch
     
     # Assertions
@@ -87,7 +90,7 @@ def predict_single \
     assert a.all_valid_path(modl_path)
     
     # Loads
-    modl = Net(5, 104)
+    modl = Modl()
     modl.load_state_dict(torch.load(modl_path))
     
     # Prepare data
@@ -129,7 +132,7 @@ def predict_multiple \
     # Imports
     from src.utils import assertions as a
     from src.models.predict import prepare_data, predict_classification, decode_predictions
-    from src.models.pytorch import Net
+    from src.models.pytorch import Modl
     import torch
     
     # Assertions
@@ -139,7 +142,7 @@ def predict_multiple \
     assert a.all_valid_path(modl_path)
     
     # Loads
-    modl = Net(5, 104)
+    modl = Modl()
     modl.load_state_dict(torch.load(modl_path))
     
     # Prepare data

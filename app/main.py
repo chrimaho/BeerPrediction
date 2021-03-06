@@ -27,7 +27,6 @@ import os
 import sys
 import subprocess
 from fastapi import FastAPI, Response
-from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, PlainTextResponse, JSONResponse
 from typing import List
 from fastapi import Query
@@ -62,6 +61,7 @@ else:
 
 # Production functions ----
 from src.prod import production as p
+from src.utils.misc import read
 
 
 #------------------------------------------------------------------------------#
@@ -126,38 +126,13 @@ def get_model_architecture():
 # POST                                                                      ####
 #------------------------------------------------------------------------------#
 
-# Post Single Description ----
-post_single_description = \
-"""
-**/beer/type**
-
-_Purpose_: Use [/beer/type](/beer/type) to query for only a single beer type.
-
-_Expected Input String_: /beer/type?brewery_name=`brewery_name`&review_aroma=`review_aroma`&review_appearance=`review_appearance`&review_palate=`review_palate`&review_taste=`review_taste`
-
-_Input Types_: As defined below. Specifically:
-1. `brewery_name`: str
-1. `review_aroma`: float
-1. `review_appearance`: float
-1. `review_palate`: float
-1. `review_taste`: float
-
-_Validations_:
-1. `brewery_name`: Must be valid brewery name.
-1. `review_aroma`, `review_appearance`, `review_palate`, `review_taste`: Must all be `float` values, between `0` and `5`.
-
-_Example Input_: [/beer/type?brewery_name=Epic%20Ales&review_aroma=1&review_appearance=1&review_palate=1&review_taste=1](/beer/type?brewery_name=Epic%20Ales&review_aroma=1&review_appearance=1&review_palate=1&review_taste=1)
-
-_Example Output_: 
-"""
-
 # /beer/type ----
 @app.post \
     ( path="/beer/type"
-    # , response_class=JSONResponse
+    , response_class=PlainTextResponse
     , tags=["Query Model"]
-    , summary="Query single beer types"
-    , description=post_single_description
+    , summary="Predict single beer types"
+    , description=read("./docs/post_single_description.md")
     , responses={498: {"title":"Invalid Token", "description":"If any input params are invalid."}}
     )
 def post_single \
@@ -191,15 +166,50 @@ def post_single \
         )
     
     # Return
-    return PlainTextResponse(str(pred))
+    return PlainTextResponse(str(pred[0]))
 
 # /beers/type ----
-@app.post("/beers/type", response_class=JSONResponse, tags=["Query Model"])
-def query_miltiple_beer_types \
-    ( brewery_name:List[str]=Query(default="None", description="List of Brewery names (field: `brewery_name`).")
-    , review_aroma:List[float]=Query(default=1, description="List of `review_aroma` values.")
-    , review_appearance:List[float]=Query(default=1, description="List of `review_appearance` values.")
-    , review_palate:List[float]=Query(default=1, description="List of `review_palate` values.")
-    , review_taste:List[float]=Query(default=1, description="List of `review_taste` values.")
+@app.post \
+    ( "/beers/type"
+    , response_class=PlainTextResponse
+    , tags=["Query Model"]
+    , summary="Predict single beer types"
+    , description=read("./docs/post_multiple_description.md")
+    , responses={498: {"title":"Invalid Token", "description":"If any input params are invalid."}}
+    )
+def post_multiple \
+    ( brewery_name:List[str]=Query(..., description="List of Brewery names (field: `brewery_name`).")
+    , review_aroma:List[float]=Query(..., description="List of Aroma scores (field: `review_aroma`).")
+    , review_appearance:List[float]=Query(..., description="List of Appearance scores (field: `review_appearance`).")
+    , review_palate:List[float]=Query(..., description="List of Palate scores (field: `review_palate`).")
+    , review_taste:List[float]=Query(..., description="List of Taste scores (field: `review_taste`).")
     ):
-    return object
+    
+    # Imports
+    from joblib import load
+    import numpy as np
+    
+    # Validate params
+    error = ""
+    breweries = load("./data/processed/valid_breweries.joblib")
+    for brewery in brewery_name:
+        if not brewery in breweries:
+            error += f"The brewery '{brewery}' is not valid."
+    for param in ["review_aroma", "review_appearance", "review_palate", "review_taste"]:
+        if np.any(np.array(eval(param)) <= 0) and np.any(np.array(eval(param)) > 5):
+            if len(error)>0: error += "\n"
+            error += f"The values for param '{param}' is invalid. Must be between '0' and '5'."
+    if len(error)>0:
+        return PlainTextResponse(error, status_code=498)
+    
+    # Get prediction
+    pred = p.predict_multiple \
+        ( brewery_name=brewery_name
+        , review_aroma=review_aroma
+        , review_appearance=review_appearance
+        , review_palate=review_palate
+        , review_taste=review_taste
+        )
+    
+    # Return
+    return JSONResponse(list(pred))

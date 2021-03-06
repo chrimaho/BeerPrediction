@@ -1,6 +1,6 @@
 # Beer Predictions
 
-![](https://img.shields.io/static/v1?label=version&message=v0.1.0&style=flat&color=green)
+![](https://img.shields.io/static/v1?label=version&message=0.1.0&style=flat&color=green)
 
 ## Overview
 

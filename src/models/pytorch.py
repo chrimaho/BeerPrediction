@@ -169,6 +169,27 @@ class Net(nn.Module):
         return X
         
 
+class Modl(nn.Module):
+    
+    def __init__(self):
+        super().__init__()
+        self.features = nn.Sequential \
+            ( nn.Identity(5, 5)
+            , nn.Linear(5, 10)
+            , nn.ReLU()
+            , nn.Dropout(p=0.3)
+            , nn.Linear(10, 50)
+            , nn.ReLU()
+            , nn.Dropout(p=0.3)
+            , nn.Linear(50, 100)
+            , nn.ReLU()
+            , nn.Dropout(p=0.3)
+            , nn.Linear(100, 104)
+            , nn.Softmax(dim=1)
+            )
+    
+    def forward(self, feat):
+        return self.features(feat)
 
 #------------------------------------------------------------------------------#
 #                                                                              #

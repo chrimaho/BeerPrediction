@@ -66,3 +66,24 @@ def str_right(string:str, num_chars:int):
     assert isinstance(num_chars, int)
     return string[-num_chars:]
 
+
+
+#------------------------------------------------------------------------------#
+# File interactions                                                         ####
+#------------------------------------------------------------------------------#
+
+def read(path:str):
+    
+    # Imports
+    from src.utils import assertions as a
+    
+    # Assertions
+    assert a.all_str(path)
+    assert a.all_valid_path(path)
+    
+    # Read
+    with open(path, "rt") as f:
+        data = f.read()
+            
+    # Return
+    return data

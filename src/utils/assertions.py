@@ -18,6 +18,17 @@ def is_ndarray(obj):
     return isinstance(obj, np.ndarray)
 
 
+def is_in(elem, lst):
+    assert not has_len(elem)
+    assert has_len(lst)
+    return elem in lst
+
+
+def is_valid_path(path:str):
+    import os
+    return os.path.exists(path)
+
+
 
 #------------------------------------------------------------------------------#
 # has_*() funcions                                                          ####
@@ -26,7 +37,6 @@ def is_ndarray(obj):
 
 def has_len(obj):
     return hasattr(obj, "__len__")
-
 
 
 
@@ -99,6 +109,13 @@ def all_float(lst):
         return isinstance(lst, float)
 
 
+def all_float_or_int(lst):
+    if isinstance(lst, list):
+            return all([isinstance(element, (float,int)) for element in lst])
+    else:
+        return isinstance(lst, (float,int))
+
+
 def all_dataframe(lst):
     if isinstance(lst, list):
         return all([is_dataframe(element) for element in lst])
@@ -129,10 +146,14 @@ def all_dataframe_or_series_or_ndarray(lst):
     else:
         return isinstance(lst, (pd.DataFrame, pd.Series, np.ndarray))
 
-
     
-def is_in(elem, lst):
-    assert not has_len(elem)
-    assert has_len(lst)
-    return elem in lst
+def all_list(lst):
+    return all([isinstance(element, list) for element in lst])
 
+
+def all_valid_path(lst):
+    from src.utils.assertions import is_valid_path
+    if isinstance(lst, list):
+        return all([is_valid_path(element) for element in lst])
+    else:
+        return is_valid_path(lst)

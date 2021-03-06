@@ -29,6 +29,10 @@ def is_valid_path(path:str):
     return os.path.exists(path)
 
 
+def is_equal(obj1, obj2):
+    return obj1==obj2
+
+
 
 #------------------------------------------------------------------------------#
 # has_*() funcions                                                          ####
@@ -157,3 +161,7 @@ def all_valid_path(lst):
         return all([is_valid_path(element) for element in lst])
     else:
         return is_valid_path(lst)
+    
+    
+def all_equal(lst):
+    return len(set(lst))==1

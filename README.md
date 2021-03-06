@@ -1,20 +1,3 @@
-<title>Beer Prediction</title>
-<style>
-    h1 {text-indent: 0px;  font-weight: bold;   font-style: normal; text-align: center; padding-top: 0px;}
-    h2 {text-indent: 0px;  font-weight: bold;   font-style: normal; text-align: left;   padding-top: 20px;}
-    h3 {text-indent: 40px; font-weight: normal; font-style: normal; text-align: left;   padding-top: 15px;}
-    h4 {text-indent: 80px; font-weight: normal; font-style: italic; text-align: left;   padding-top: 10px;}
-    table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 5px;
-    }
-    code {
-        background-color: lightgrey;
-    }
-</style>
 <h1>Beer Predictions</h1>
     <h2>Overview</h2>
         <table>

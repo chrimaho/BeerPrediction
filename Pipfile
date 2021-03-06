@@ -15,6 +15,7 @@ matplotlib = "*"
 varname = "*"
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
+torchsummary = "*"
 
 [dev-packages]
 

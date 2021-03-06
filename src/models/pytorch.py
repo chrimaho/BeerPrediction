@@ -47,15 +47,21 @@ def get_device():
 
 class PyTorchDataset(Dataset):
         
-    def __init__(self, feat, targ):
+    def __init__(self, feat, targ=None):
         self.feat = self.to_tensor(feat.copy()) #astype(np.float32)
-        self.targ = self.to_tensor(targ.copy()) #astype(np.float32)
+        if targ is not None:
+            self.targ = self.to_tensor(targ.copy()) #astype(np.float32)
         
     def __len__(self):
-        return len(self.targ)
+        return len(self.feat)
         
     def __getitem__(self, index):
-        return self.feat[index], self.targ[index]
+        feat = self.feat[index]
+        if hasattr(self, "targ"):
+            targ = self.targ[index]
+        else:
+            targ = 0
+        return feat, targ
         
     def to_tensor(self, data):
         return torch.Tensor(np.array(data))
@@ -176,7 +182,7 @@ class Net(nn.Module):
 #------------------------------------------------------------------------------#
 
 
-def train_regression(train_data, model, criterion, optimizer, batch_size, device, scheduler=None, collate_fn=None):
+def regr_trn(train_data, model, criterion, optimizer, batch_size, device, scheduler=None, collate_fn=None):
     """Train a Pytorch regresssion model
 
     Parameters
@@ -249,7 +255,7 @@ def train_regression(train_data, model, criterion, optimizer, batch_size, device
 # Test                                                                      ####
 #------------------------------------------------------------------------------#
 
-def test_regression(test_data, model, criterion, batch_size, device, collate_fn=None):
+def regr_tst(test_data, model, criterion, batch_size, device, collate_fn=None):
     """Calculate performance of a Pytorch regresssion model
 
     Parameters
@@ -316,7 +322,7 @@ def test_regression(test_data, model, criterion, batch_size, device, collate_fn=
 # Train                                                                     ####
 #------------------------------------------------------------------------------#
 
-def train_binary\
+def bina_trn\
     ( train_data
     , model
     , criterion
@@ -401,7 +407,7 @@ def train_binary\
 # Test                                                                      ####
 #------------------------------------------------------------------------------#
 
-def test_binary \
+def bina_tst \
     (test_data
     , model
     , criterion
@@ -478,7 +484,7 @@ def test_binary \
 # Train                                                                     ####
 #------------------------------------------------------------------------------#
 
-def train_classification \
+def clas_trn \
     ( train_data
     , model
     , criterion
@@ -569,7 +575,7 @@ def train_classification \
 # Test                                                                      ####
 #------------------------------------------------------------------------------#
 
-def test_classification \
+def clas_tst \
     ( test_data
     , model
     , criterion
@@ -634,6 +640,14 @@ def test_classification \
     return test_loss / len(test_data), test_acc / len(test_data)
 
 
+
+#------------------------------------------------------------------------------#
+# Predict                                                                   ####
+#------------------------------------------------------------------------------#
+
+def clas_prd( test_data, model, batch_size:int=None, generate_batch=None):
+    from src.models.predict import predict_classification as cp
+    return cp(test_data=test_data, model=model, batch_size=batch_size, generate_batch=generate_batch)
 
 #------------------------------------------------------------------------------#
 #                                                                              #

@@ -42,7 +42,8 @@ from fastapi import Query
 
 # Ensure the directory is correct... every time ----
 for _ in range(5):
-    if not os.getcwd().lower() == subprocess.run("git rev-parse --show-toplevel", stdout=subprocess.PIPE).stdout.decode("utf-8").replace("/","\\").strip().lower():
+    # if not os.getcwd().lower() == subprocess.run("git rev-parse --show-toplevel", stdout=subprocess.PIPE).stdout.decode("utf-8").replace("/","\\").strip().lower():
+    if not os.getcwd().lower() == "BeerPrediction".lower():
         os.chdir(".."),
     else:
         break
@@ -53,7 +54,7 @@ if not os.path.abspath(".") in sys.path:
 else:
     sys.path.remove(os.path.abspath("."))
     sys.path.append(os.path.abspath("."))
-
+    
 
 #------------------------------------------------------------------------------#
 # Import Customs                                                            ####

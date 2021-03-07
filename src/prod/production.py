@@ -80,7 +80,7 @@ def predict_single \
     # Imports
     from src.utils import assertions as a
     from src.models.predict import prepare_data, predict_classification, decode_predictions
-    from src.models.pytorch import Modl
+    from src.models.pytorch import Modl, get_device
     import torch
     
     # Assertions
@@ -91,7 +91,7 @@ def predict_single \
     
     # Loads
     modl = Modl()
-    modl.load_state_dict(torch.load(modl_path))
+    modl.load_state_dict(torch.load(modl_path, map_location=get_device()))
     
     # Prepare data
     data = prepare_data \
@@ -132,7 +132,7 @@ def predict_multiple \
     # Imports
     from src.utils import assertions as a
     from src.models.predict import prepare_data, predict_classification, decode_predictions
-    from src.models.pytorch import Modl
+    from src.models.pytorch import Modl, get_device
     import torch
     
     # Assertions
@@ -143,7 +143,7 @@ def predict_multiple \
     
     # Loads
     modl = Modl()
-    modl.load_state_dict(torch.load(modl_path))
+    modl.load_state_dict(torch.load(modl_path, map_location=get_device()))
     
     # Prepare data
     data = prepare_data \

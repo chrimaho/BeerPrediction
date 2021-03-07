@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c5cac8177b58d1d47aa79a502031c33d61bfb68b7f37556c92bcd33163334b99"
+            "sha256": "ab17c38e448dbf5f2baf44063ce4866551df83ae697c06466ba39a609ea9496d"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1027,14 +1027,6 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==2.1.0"
-        },
-        "torch": {
-            "file": "https://download.pytorch.org/whl/cu101/torch-1.7.1%2Bcu101-cp37-cp37m-win_amd64.whl",
-            "hashes": [
-                "sha256:a002cfad11ee193505e30a1c6a800d5047e58741f106e0174330914e605ab8a4"
-            ],
-            "index": "pypi",
-            "version": "==1.7.1+cu101"
         },
         "torchsummary": {
             "hashes": [

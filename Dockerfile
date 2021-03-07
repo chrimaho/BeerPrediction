@@ -3,13 +3,12 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.7
 COPY Pipfile .
 COPY requirements.txt .
 
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# RUN pip install --upgrade pip
 # RUN pip install pipenv
 # RUN pipenv install
 # RUN pipenv install --system --deploy --ignore-pipfile
-# RUN pipenv lock --requirements > requirements.txt
 
 COPY ./app /app
 COPY ./models /models

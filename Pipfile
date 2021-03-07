@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 sklearn = "*"
 numpy = "*"
-# pandas = "*"
+pandas = "*"
 joblib = "*"
 scipy = "*"
 # pandas-profiling = "*"

@@ -1,6 +1,9 @@
 # Beer Predictions
 
-![](https://img.shields.io/static/v1?label=version&message=0.1.0&style=flat&color=green)
+[![](https://img.shields.io/static/v1?label=Version&message=0.1.0&style=flat&color=blue)][repo]
+[![](https://img.shields.io/static/v1?label=License&message=MIT&style=flat&color=green)][license]
+![](https://img.shields.io/static/v1?label=Python&message=3.7&style=flat&color=blue)
+
 
 ## Overview
 
@@ -17,9 +20,11 @@
             <p>
                 1. Design a Neural Network using <a href="https://pytorch.org/">PyTorch</a> library.
                 <br>
-                1. Deploy the model behind an API endpoing using <a href="https://fastapi.tiangolo.com/">FastAPI</a>.
+                2. Productionise the model behind an API endpoing using <a href="https://fastapi.tiangolo.com/">FastAPI</a>.
                 <br>
-                1. Test, document, and publish.
+                3. Deploy the app to the public using <a href="https://heroku.com/">Heroku</a> library.
+                <br>
+                4. Train, test, document, and publish.
             </p>   
         </td>
     </tr>
@@ -133,4 +138,11 @@
         <td><i>Published</i></td>
         <td>7/Mar/2021</td>
     </tr>
+    <tr>
+        <td><i>License</i></td>
+        <td><a href="https://github.com/chrimaho/BeerPrediction/blob/main/LICENSE">MIT</a></td>
+    </tr>
 </table>
+
+[repo]: https://github.com/chrimaho/BeerPrediction "Beer Prediction"
+[license]: https://github.com/chrimaho/BeerPrediction/blob/main/LICENSE "License"

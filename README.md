@@ -127,6 +127,10 @@
         <td><a href="https://www.linkedin.com/in/chrimaho/">Chris Mahoney</a></td>
     </tr>
     <tr>
+        <td><i>Author</i></td>
+        <td><a href="https://www.linkedin.com/in/chrimaho/">Chris Mahoney</a></td>
+    </tr>
+    <tr>
         <td><i>Repo</i>:</td>
         <td><a href="https://github.com/chrimaho/BeerPrediction">BeerPrediction</a></td>
     </tr>

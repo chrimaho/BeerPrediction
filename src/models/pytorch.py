@@ -9,7 +9,6 @@
 #------------------------------------------------------------------------------#
 
 
-from collections import OrderedDict
 import numpy as np
 import torch
 from torch import nn
@@ -190,6 +189,15 @@ class Modl(nn.Module):
     
     def forward(self, feat):
         return self.features(feat)
+    
+    def load(self, model_path):
+        # Inspiration: https://www.linkedin.com/pulse/pytorch-inference-api-ibrahim-sobh-phd/
+        self.load_state_dict(torch.load(model_path, map_location=get_device()))
+        self.eval()
+        
+    def predict(self, data):
+        outputs = self(data)
+        return outputs
 
 #------------------------------------------------------------------------------#
 #                                                                              #

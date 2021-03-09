@@ -91,7 +91,8 @@ def predict_single \
     
     # Loads
     modl = Modl()
-    modl.load_state_dict(torch.load(modl_path, map_location=get_device()))
+    modl.load(model_path=modl_path)
+    # modl.load_state_dict(torch.load(modl_path, map_location=get_device()))
     
     # Prepare data
     data = prepare_data \

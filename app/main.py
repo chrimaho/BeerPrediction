@@ -44,7 +44,7 @@ from fastapi import Query
 for _ in range(5):
     # if not os.getcwd().lower() == subprocess.run("git rev-parse --show-toplevel", stdout=subprocess.PIPE).stdout.decode("utf-8").replace("/","\\").strip().lower():
     if not os.getcwd().lower() == "BeerPrediction".lower():
-        os.chdir(".."),
+        os.chdir("..")
     else:
         break
     

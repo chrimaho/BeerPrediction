@@ -127,8 +127,8 @@
         <td><a href="https://www.linkedin.com/in/chrimaho/">Chris Mahoney</a></td>
     </tr>
     <tr>
-        <td><i>Author</i></td>
-        <td><a href="https://www.linkedin.com/in/chrimaho/">Chris Mahoney</a></td>
+        <td><i>App</i></td>
+        <td><a href="https://beer-prediction.herokuapp.com/">BeerPrediction</a></td>
     </tr>
     <tr>
         <td><i>Repo</i>:</td>

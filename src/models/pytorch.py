@@ -172,23 +172,26 @@ class Modl(nn.Module):
     
     def __init__(self):
         super().__init__()
-        self.features = nn.Sequential \
+        self.network = nn.Sequential \
             ( nn.Identity(5, 5)
             , nn.Linear(5, 10)
             , nn.ReLU()
-            , nn.Dropout(p=0.3)
             , nn.Linear(10, 50)
             , nn.ReLU()
-            , nn.Dropout(p=0.3)
             , nn.Linear(50, 100)
             , nn.ReLU()
             , nn.Dropout(p=0.3)
             , nn.Linear(100, 104)
-            , nn.Softmax(dim=1)
             )
+        self.softmax = nn.Softmax(dim=1)
     
     def forward(self, feat):
-        return self.features(feat)
+        # The nn.CrossEntropyLoss() class expects raw logits... So need to dynamically add nn.Softmax() when training or not.
+        # See: https://discuss.pytorch.org/t/cross-entropy-loss-is-not-decreasing/43814/2
+        if self.training:
+            return self.network(feat)
+        else:
+            return self.softmax(self.network(feat))
     
     def load(self, model_path):
         # Inspiration: https://www.linkedin.com/pulse/pytorch-inference-api-ibrahim-sobh-phd/
@@ -576,7 +579,8 @@ def clas_trn \
         target_class = target_class.to(device)
         
         # Make predictions
-        output = model(feature)
+        # output = model(feature)
+        output = model.predict(feature)
         
         # Calculate loss for given batch
         loss = criterion(output, target_class.long())
@@ -655,7 +659,8 @@ def clas_tst \
         with torch.no_grad():
             
             # Make predictions
-            output = model(feature)
+            # output = model(feature)
+            output = model.predict(feature)
             
             # Calculate loss for given batch
             loss = criterion(output, target_class.long())
